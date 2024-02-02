@@ -36,3 +36,7 @@ app.post("/signup", async (req, res) => {
 
   res.status(201).json({ msg: "Cadastro efetuado com sucesso!" });
 });
+
+app.get("/users", (req, res) => {
+  return res.status(200).json({ data: users });
+});
