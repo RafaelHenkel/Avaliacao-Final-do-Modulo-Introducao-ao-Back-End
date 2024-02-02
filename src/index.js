@@ -8,7 +8,7 @@ const users = [];
 
 app.use(express.json());
 
-app.listen(port, () => console.log("Server started in port:  ", port));
+app.listen(port, () => console.log(`Server started in port: ${port}`));
 
 // Criar conta
 app.post("/signup", async (req, res) => {
@@ -24,11 +24,12 @@ app.post("/signup", async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(pass, 10);
-
+  console.log(hashPassword);
   users.push({
     id: acc,
+    user: data.user,
     email: data.email,
-    pass: data.pass,
+    pass: hashPassword,
   });
 
   acc++;
