@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 const app = express();
 const port = 8080;
 let acc = 1;
+let accMsg = 1;
 const users = [];
 const message = [];
 
@@ -40,23 +41,21 @@ app.post("/signup", async (req, res) => {
 
 //Login
 app.post("/login", async (req, res) => {
-  const { name, mail, pass } = req.body;
+  const { mail, pass } = req.body;
 
-  const user = users.find((user) => user.name === name);
   const userMail = users.find((user) => user.mail === mail);
 
   const hashPass = await bcrypt.hash(pass, 10);
-
-  const passMath = await bcrypt.compare(pass, hashPass);
-
-  if (!passMath) {
-    return res.status(400).json({ msg: "Credenciais invalidas" });
-  } else if (!user) {
-    return res.status(400).json({ msg: "Credenciais (nome) invalidas" });
-  } else if (!userMail) {
-    return res.status(400).json({ msg: "Credenciais (email) invalidas" });
+  if (userMail) {
+    bcrypt.compare(pass, hashPass, (err, result) => {
+      if (result) {
+        res.status(200).json({ msg: "Login bem sucedido", data: mail });
+      } else {
+        return res.status(400).json({ msg: "Credenciais(senha) invalidas" });
+      }
+    });
   } else {
-    res.status(200).json({ msg: "Login bem sucedido", data: mail });
+    return res.status(400).json({ msg: "Credenciais (email) invalidas" });
   }
 });
 
@@ -67,18 +66,24 @@ app.get("/users", (req, res) => {
 
 //AREA CRUD
 //Criar recado
-
-app.post("/userMessage", (req, res) => {
+app.post("/userMessage/:mail", (req, res) => {
   const data = req.body;
+  const userMail = req.params.mail; 
+  const existUser = users.findIndex((uMail) => uMail.mail === userMail);
+console.log(existUser)
+  if (existUser !== -1) {
+    message.push({
+      userMail: userMail,
+      id: accMsg,
+      title: data.title,
+      description: data.description,
+    });
 
-  message.push({
-    id: acc,
-    title: data.title,
-    description: data.description,
-  });
-  acc++;
-
-  res.status(200).json({ msg: "Recado criado com sucesso" });
+    res.status(200).json({ msg: "Recado criado com sucesso" });
+    accMsg++;
+  } else {
+    res.status(404).json({ msg: "Este email nao existe, tente novamente!" });
+  }
 });
 
 //Mostrar recados cadastrados
@@ -86,6 +91,7 @@ app.get("/userMessage", (req, res) => {
   return res.status(200).json({ data: message });
 });
 
+//Atualizar recados
 app.put("/userMessage/:messageId", (req, res) => {
   const data = req.body;
 
@@ -109,7 +115,6 @@ app.put("/userMessage/:messageId", (req, res) => {
 });
 
 //Deletar recados
-
 app.delete("/userMessage/:messageId", (req, res) => {
   const msgId = Number(req.params.messageId);
 
