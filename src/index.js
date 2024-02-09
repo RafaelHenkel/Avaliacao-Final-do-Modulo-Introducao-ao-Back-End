@@ -1,5 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import verifyUsers from "./middlewares/verifyUsers";
 
 const app = express();
 const port = 8080;
@@ -14,7 +15,7 @@ app.listen(port, () => console.log(`Server started in port: ${port}`));
 
 //AREA DE LOGIN
 // Criar conta
-app.post("/signup", async (req, res) => {
+app.post("/signup", verifyUsers, async (req, res) => {
   const data = req.body;
   const { mail, pass } = req.body;
   const mailExist = users.find((user) => user.mail === mail);
@@ -68,9 +69,9 @@ app.get("/users", (req, res) => {
 //Criar recado
 app.post("/userMessage/:mail", (req, res) => {
   const data = req.body;
-  const userMail = req.params.mail; 
+  const userMail = req.params.mail;
   const existUser = users.findIndex((uMail) => uMail.mail === userMail);
-console.log(existUser)
+  console.log(existUser);
   if (existUser !== -1) {
     message.push({
       userMail: userMail,
