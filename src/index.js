@@ -70,7 +70,7 @@ app.post("/userMessage/:mail", (req, res) => {
   const data = req.body;
   const userMail = req.params.mail;
   const existUser = users.findIndex((uMail) => uMail.mail === userMail);
-  console.log(existUser);
+
   if (existUser !== -1) {
     message.push({
       userMail: userMail,
