@@ -48,13 +48,12 @@ app.post("/login", async (req, res) => {
 
   const hashPass = await bcrypt.hash(pass, 10);
   if (userMail) {
-    bcrypt.compare(pass, hashPass, (err, result) => {
-      if (result) {
-        res.status(200).json({ msg: "Login bem sucedido", data: mail });
-      } else {
-        return res.status(400).json({ msg: "Credenciais(senha) invalidas" });
-      }
-    });
+    const passResult = bcrypt.compare(pass, hashPass);
+    if (passResult) {
+      res.status(200).json({ msg: "Login bem sucedido", data: mail });
+    } else {
+      return res.status(400).json({ msg: "Credenciais(senha) invalidas" });
+    }
   } else {
     return res.status(400).json({ msg: "Credenciais (email) invalidas" });
   }
