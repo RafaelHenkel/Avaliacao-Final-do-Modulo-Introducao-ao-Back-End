@@ -42,13 +42,15 @@ app.post("/signup", verifyUsers, async (req, res) => {
 
 //Login
 app.post("/login", async (req, res) => {
-  const { mail, pass } = req.body;
+  const data = req.body;
+  const mail = data.mail;
+  const pass = data.pass;
 
-  const userMail = users.find((user) => user.mail === mail);
+  const userResult = users.find((user) => user.mail === mail);
 
-  const hashPass = await bcrypt.hash(pass, 10);
-  if (userMail) {
-    const passResult = bcrypt.compare(pass, hashPass);
+  const passResult = await bcrypt.compare(pass, userResult.pass);
+
+  if (userResult) {
     if (passResult) {
       res.status(200).json({ msg: "Login bem sucedido", data: mail });
     } else {
