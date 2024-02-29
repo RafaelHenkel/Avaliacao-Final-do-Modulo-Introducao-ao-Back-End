@@ -50,9 +50,10 @@ app.post("/login", async (req, res) => {
 
   const userResult = users.find((user) => user.mail === mail);
 
-  const passResult = await bcrypt.compare(pass, userResult.pass);
+  
 
   if (userResult) {
+    const passResult = await bcrypt.compare(pass, userResult.pass);
     if (passResult) {
       res.status(200).json({ msg: "Login bem sucedido", data: mail });
     } else {
