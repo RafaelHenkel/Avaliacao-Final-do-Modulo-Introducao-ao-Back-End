@@ -50,8 +50,6 @@ app.post("/login", async (req, res) => {
 
   const userResult = users.find((user) => user.mail === mail);
 
-  
-
   if (userResult) {
     const passResult = await bcrypt.compare(pass, userResult.pass);
     if (passResult) {
@@ -137,7 +135,7 @@ app.delete("/userMessage/:messageId", (req, res) => {
 
 //Paginação de recados
 
-app.get("/userMessage", (req, res) => {
+app.get("/userMessagePage", (req, res) => {
   try {
     if (message.length === 0) {
       return res
@@ -148,11 +146,11 @@ app.get("/userMessage", (req, res) => {
     const limit = parseInt(req.query.limit);
     const offset = parseInt(req.query.offset);
 
-    const itemPage = Math.floor(Math.random() * offset);
+    const itemOffset = offset - 1;
 
-    const msgPage = message.slice(itemPage, itemPage + limit);
+    const msgOffset = message.slice(itemOffset, itemOffset + limit);
 
-    res.status(200).json({ data: msgPage });
+    res.status(200).json({ data: msgOffset });
   } catch (error) {
     return res.status(500).send({ message: "erro no servidor" });
   }
