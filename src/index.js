@@ -133,3 +133,26 @@ app.delete("/userMessage/:messageId", (req, res) => {
       .json({ msg: "Este id nao existe, tente novamente!" });
   }
 });
+
+//Paginação de recados
+
+app.get("/userMessage", (req, res) => {
+  try {
+    if (message.length === 0) {
+      return res
+        .status(400)
+        .send({ message: "Você deve adicionar ao menos 1 recado" });
+    }
+
+    const limit = parseInt(req.query.limit);
+    const offset = parseInt(req.query.offset);
+
+    const itemPage = Math.floor(Math.random() * offset);
+
+    const msgPage = message.slice(itemPage, itemPage + limit);
+
+    res.status(200).json({ data: msgPage });
+  } catch (error) {
+    return res.status(500).send({ message: "erro no servidor" });
+  }
+});
