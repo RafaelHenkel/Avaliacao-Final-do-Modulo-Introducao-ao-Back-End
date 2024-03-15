@@ -144,13 +144,13 @@ app.get("/userMessagePage", (req, res) => {
     }
 
     const limit = parseInt(req.query.limit);
-    const offset = parseInt(req.query.offset);
+    const page = parseInt(req.query.page);
 
-    const itemOffset = offset - 1;
+    const itempage = (page - 1) * limit;
 
-    const msgOffset = message.slice(itemOffset, itemOffset + limit);
+    const msgpage = message.slice(itempage, itempage + limit);
 
-    res.status(200).json({ data: msgOffset });
+    res.status(200).json({ data: msgpage });
   } catch (error) {
     return res.status(500).send({ message: "erro no servidor" });
   }
